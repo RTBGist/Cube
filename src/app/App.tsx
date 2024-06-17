@@ -1,65 +1,68 @@
 import {useState} from "react";
+import {BetOptions, ResultOptions, ResultType} from "../features/CubeGame/model/types/types";
 
 function App() {
   const [balance, setBalance] = useState(100);
-  const [betOption, setBetOption] = useState(null);
   const [betSize, setBetSize] = useState(1);
+  const [betOption, setBetOption] = useState<BetOptions>(null);
   const [currentBetNumber, setCurrentBetNumber] = useState(1);
+  const [rolledNumber, setRolledNumber] = useState<number>(null);
+  const [result, setResult] = useState<ResultType>(null);
 
   const onSelectBid = (event) => {
     setBetSize(event.target?.value)
   }
 
   const onChangeCurrentBetNumber = (event) => {
-    let resultNumber = event.target?.value;
+    let resultNumber = +event.target?.value;
 
     // TODO обработку, чтоб значения были от 1 до 6
-    setCurrentBetNumber(+resultNumber)
-    setBetOption(resultNumber)
+    setCurrentBetNumber(resultNumber)
   }
 
   const onPlayGame = () => {
-    const newNumber = Math.floor(Math.random() * 6) + 1;
-    const evenArr = [2,4,6];
-    const oddArr = [1,3,5];
-    const onetothree = [1,2,3];
-    const fourtosix = [4,5,6];
+    const randomNumber = Math.floor(Math.random() * 6) + 1;
+    setRolledNumber(randomNumber);
+    let win = false;
 
-    if(betOption === newNumber) {
-      console.log('x3')
-      setBalance((prevBalance) => prevBalance + betSize * 3)
-      return;
+
+    switch (betOption) {
+      case BetOptions.EVEN:
+        win = randomNumber % 2 === 0
+        break;
+      case BetOptions.ODD:
+        win = randomNumber % 2 !== 0
+        break;
+      case BetOptions.FROM_ONE_TO_THREE:
+        win = randomNumber >= 1 && randomNumber <= 3
+        break;
+      case BetOptions.FROM_FOUR_TO_SIX:
+        win = randomNumber >= 4 && randomNumber <= 6
+        break;
+      case BetOptions.NUMBER:
+        win = randomNumber === currentBetNumber;
+        break;
     }
 
-    if(betOption === 'От 1 до 3' && onetothree.includes(newNumber)){
-      console.log('x2')
-      setBalance((prevBalance) => prevBalance + betSize * 2)
-      return;
+    if(win) {
+      if(betOption === BetOptions.NUMBER) {
+        setBalance(balance + betSize * 3)
+      } else {
+        setBalance(balance + betSize * 2)
+      }
+      setResult(ResultOptions.WIN);
+    } else {
+      setBalance(balance - betSize)
+      setResult(ResultOptions.LOSE);
     }
-
-    if(betOption === 'От 4 до 6' && fourtosix.includes(newNumber)){
-      console.log('x2')
-      setBalance((prevBalance) => prevBalance + betSize * 2)
-      return;
-    }
-
-    if(betOption === 'Четное' && evenArr.includes(newNumber)) {
-      console.log('x2')
-      setBalance((prevBalance) => prevBalance + betSize * 2)
-      return;
-    }
-    if(betOption === 'Нечетное' && oddArr.includes(newNumber)) {
-      console.log('x2')
-      setBalance((prevBalance) => prevBalance + betSize * 2)
-      return;
-    }
-
-    setBalance((prevBalance) => prevBalance - betSize)
   }
 
   return (
       <>
         <div>
+          {rolledNumber !== null && <p>Rolled number: {rolledNumber}</p>}
+          {result && <p>{result === ResultOptions.WIN ? 'Вы победили!' : 'Вы проиграли!'}</p>}
+
           Баланс {balance} <br/>
           Размер ставки {betSize} <br/>
           <select value={betSize} onChange={onSelectBid}>
@@ -74,11 +77,11 @@ function App() {
         <div>
           Варианты ставок. {betOption}
 
-          <div onClick={() => setBetOption('Четное')}>Четное</div>
-          <div onClick={() => setBetOption('Нечетное')}>Нечетное</div>
-          <div onClick={() => setBetOption('От 1 до 3')}>От 1 до 3</div>
-          <div onClick={() => setBetOption('От 4 до 6')}>От 4 до 6</div>
-          <div onClick={() => setBetOption(currentBetNumber)}>
+          <div onClick={() => setBetOption(BetOptions.EVEN)}>Четное</div>
+          <div onClick={() => setBetOption(BetOptions.ODD)}>Нечетное</div>
+          <div onClick={() => setBetOption(BetOptions.FROM_ONE_TO_THREE)}>От 1 до 3</div>
+          <div onClick={() => setBetOption(BetOptions.FROM_FOUR_TO_SIX)}>От 4 до 6</div>
+          <div onClick={() => setBetOption(BetOptions.NUMBER)}>
             Конкретное число
             <input type="number" value={currentBetNumber} onChange={onChangeCurrentBetNumber} placeholder="1" />
           </div>
