@@ -9,9 +9,15 @@ interface CubeState {
 	rolledNumber: DiceNumberType,
 	result: ResultType,
 
+	setBetSize: (betSize: number) => void,
+	setBalance: (balance: number) => void,
+	setBetOption: (betOption: BetOptions) => void,
+	setCurrentBetNumber: (currentBetNumber: DiceNumberType) => void,
+	setRolledNumber: (rolledNumber: DiceNumberType) => void,
+	setResult: (result: ResultType) => void,
 }
 
-const useCubeStore = create<CubeState>()((set) => ({
+export const useCubeStore = create<CubeState>()((set) => ({
 	balance: 100,
 	betSize: 1,
 	betOption: null,
@@ -19,5 +25,10 @@ const useCubeStore = create<CubeState>()((set) => ({
 	rolledNumber: null,
 	result: null,
 
-	setBetSize: (betSize) => set(() => ({ betSize }))
+	setBetSize: (betSize) => set(() => ({ betSize: betSize })),
+	setBalance: (balance) => set(() => ({ balance: balance })),
+	setBetOption: (betOption) => set(() => ({ betOption: betOption })),
+	setCurrentBetNumber: (currentBetNumber) => set(() => ({ currentBetNumber: currentBetNumber })),
+	setRolledNumber: (rolledNumber) => set(() => ({ rolledNumber: rolledNumber })),
+	setResult: (result) => set(() => ({ result: result })),
 }))

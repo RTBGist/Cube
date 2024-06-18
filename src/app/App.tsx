@@ -1,27 +1,38 @@
-import {useState} from "react";
-import {BetOptions, ResultOptions, ResultType} from "../features/CubeGame/model/types/types";
+import {useShallow} from "zustand/react/shallow";
+import {useCubeStore} from "src/features/CubeGame/model/store/CubeStore";
+import {BetOptions, DiceNumberType, ResultOptions} from "src/features/CubeGame/model/types/types";
+
 
 function App() {
-  const [balance, setBalance] = useState(100);
-  const [betSize, setBetSize] = useState(1);
-  const [betOption, setBetOption] = useState<BetOptions>(null);
-  const [currentBetNumber, setCurrentBetNumber] = useState(1);
-  const [rolledNumber, setRolledNumber] = useState<number>(null);
-  const [result, setResult] = useState<ResultType>(null);
-
+  const { betSize, setBetSize, balance, setBalance, betOption, setBetOption, currentBetNumber, setCurrentBetNumber, rolledNumber, setRolledNumber, result, setResult } = useCubeStore(
+      useShallow((state) => ({
+        betSize: state.betSize,
+        setBetSize: state.setBetSize,
+        balance: state.balance,
+        setBalance: state.setBalance,
+        betOption: state.betOption,
+        setBetOption: state.setBetOption,
+        currentBetNumber: state.currentBetNumber,
+        setCurrentBetNumber: state.setCurrentBetNumber,
+        rolledNumber: state.rolledNumber,
+        setRolledNumber: state.setRolledNumber,
+        result: state.result,
+        setResult: state.setResult
+      }))
+  )
   const onSelectBid = (event) => {
     setBetSize(event.target?.value)
   }
 
   const onChangeCurrentBetNumber = (event) => {
-    let resultNumber = +event.target?.value;
+    let resultNumber = +event.target?.value as DiceNumberType;
 
     // TODO обработку, чтоб значения были от 1 до 6
     setCurrentBetNumber(resultNumber)
   }
 
   const onPlayGame = () => {
-    const randomNumber = Math.floor(Math.random() * 6) + 1;
+    const randomNumber = Math.floor(Math.random() * 6) + 1 as DiceNumberType;
     setRolledNumber(randomNumber);
     let win = false;
 
