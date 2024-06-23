@@ -1,4 +1,4 @@
-import {useCubeStore} from "../model/store/CubeStore";
+import {useCubeStore} from "src/features/CubeGame";
 import {useShallow} from "zustand/react/shallow";
 
 export const BetSizePanel = () => {

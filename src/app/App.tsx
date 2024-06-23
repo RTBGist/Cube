@@ -17,6 +17,8 @@ function App() {
       }))
   )
 
+  console.log(document.cookie)
+
   const onPlayGame = () => {
     const randomNumber = Math.floor(Math.random() * 6) + 1 as DiceNumberType;
     setRolledNumber(randomNumber);

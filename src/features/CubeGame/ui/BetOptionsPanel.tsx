@@ -1,5 +1,5 @@
 import {useShallow} from "zustand/react/shallow";
-import {useCubeStore} from "../model/store/CubeStore";
+import {useCubeStore} from "src/features/CubeGame";
 import {BetOptions} from "../model/types/types";
 
 export const BetOptionsPanel = () => {

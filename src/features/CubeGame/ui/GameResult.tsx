@@ -1,6 +1,6 @@
 import {useShallow} from "zustand/react/shallow";
 import {ResultOptions} from "../model/types/types";
-import {useCubeStore} from "../model/store/CubeStore";
+import {useCubeStore} from "src/features/CubeGame";
 
 export const GameResult = () => {
 	const { rolledNumber, result, winningAmount } = useCubeStore(
