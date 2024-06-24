@@ -1,6 +1,7 @@
 import {useShallow} from "zustand/react/shallow";
 import {BetOptionsPanel, BetSizePanel, GameResult, useCubeStore} from "src/features/CubeGame";
 import {BetOptions, DiceNumberType, ResultOptions} from "src/features/CubeGame/model/types/types";
+import {LoginForm} from "src/features/Auth";
 
 
 function App() {
@@ -16,8 +17,6 @@ function App() {
         setWinningAmount: state.setWinningAmount
       }))
   )
-
-  console.log(document.cookie)
 
   const onPlayGame = () => {
     const randomNumber = Math.floor(Math.random() * 6) + 1 as DiceNumberType;
@@ -59,6 +58,8 @@ function App() {
 
   return (
       <>
+        <LoginForm />
+
         Баланс {balance} <br/>
 
         <GameResult />
