@@ -1,7 +1,9 @@
+import {useEffect} from "react";
 import {useShallow} from "zustand/react/shallow";
 import {BetOptionsPanel, BetSizePanel, GameResult, useCubeStore} from "src/features/CubeGame";
 import {BetOptions, DiceNumberType, ResultOptions} from "src/features/CubeGame/model/types/types";
-import {LoginForm} from "src/features/Auth";
+import {LoginForm, useAuthStore} from "src/features/Auth";
+import {fetchAPI} from "src/shared/lib/fetchAPI";
 
 
 function App() {
@@ -14,9 +16,41 @@ function App() {
         currentBetNumber: state.currentBetNumber,
         setRolledNumber: state.setRolledNumber,
         setResult: state.setResult,
-        setWinningAmount: state.setWinningAmount
+        setWinningAmount: state.setWinningAmount,
       }))
   )
+
+  const { isAuth, setIsAuth } = useAuthStore(
+      useShallow((state) => ({
+        isAuth: state.isAuth,
+        setIsAuth: state.setIsAuth
+      }))
+  )
+
+  useEffect(() => {
+    if(localStorage.getItem('userAuth') === 'true') {
+      setIsAuth(true);
+
+      (async () => {
+        try {
+          const response = await fetchAPI('https://api.lettobet.dev.bet4skill.com/api/auth/me', null, 'GET');
+
+          if(!response) {
+            throw new Error()
+          }
+          setIsAuth(true);
+        } catch (e) {
+          console.log('error /me', e)
+          setIsAuth(false);
+        }
+      })()
+    }
+  }, []);
+
+  const onQuit = () => {
+    setIsAuth(false);
+    localStorage.setItem('userAuth', 'false');
+  }
 
   const onPlayGame = () => {
     const randomNumber = Math.floor(Math.random() * 6) + 1 as DiceNumberType;
@@ -58,7 +92,16 @@ function App() {
 
   return (
       <>
-        <LoginForm />
+        {isAuth ?
+            <>
+              Вы уже авторизированы
+              <button onClick={onQuit}>Выйти</button>
+            </>
+            :
+            <LoginForm />
+        }
+
+
 
         Баланс {balance} <br/>
 
