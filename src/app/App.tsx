@@ -27,6 +27,8 @@ function App() {
       }))
   )
 
+  const isButtonDisabled = !betOption || !isAuth;
+
   useEffect(() => {
     if(localStorage.getItem('userAuth') === 'true') {
       setIsAuth(true);
@@ -34,13 +36,16 @@ function App() {
       (async () => {
         try {
           const response = await fetchAPI('https://api.lettobet.dev.bet4skill.com/api/auth/me', null, 'GET');
-
-          if(!response) {
+          console.log(response);
+          if(response?.status === 401) {
             throw new Error()
           }
           setIsAuth(true);
+          localStorage.setItem('userAuth', 'true');
         } catch (e) {
           console.log('error /me', e)
+
+          localStorage.setItem('userAuth', 'false');
           setIsAuth(false);
         }
       })()
@@ -108,7 +113,7 @@ function App() {
         <GameResult />
         <BetSizePanel />
         <BetOptionsPanel />
-        <button onClick={onPlayGame} disabled={!betOption}>Сделать ставку</button>
+        <button onClick={onPlayGame} disabled={isButtonDisabled}>Сделать ставку</button>
       </>
   )
 }
