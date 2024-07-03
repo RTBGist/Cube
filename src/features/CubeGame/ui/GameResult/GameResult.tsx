@@ -1,6 +1,7 @@
 import {useShallow} from "zustand/react/shallow";
-import {ResultOptions} from "../model/types/types";
+import {ResultOptions} from "../../model/types/types";
 import {useCubeStore} from "src/features/CubeGame";
+import {useAuthStore} from "src/features/Auth";
 
 export const GameResult = () => {
 	const { rolledNumber, result, winningAmount } = useCubeStore(
@@ -11,9 +12,13 @@ export const GameResult = () => {
 			}))
 	)
 
+	const isAuth  = useAuthStore((state) => state.isAuth)
+
 	return (
 			<div>
-				{result === null && <p><b>Сделайте ставку</b></p>}
+				{!isAuth ? 'Войдите, чтобы продолжить' : 'Сделайте ставку'}
+				<br/>
+				<br/>
 				{rolledNumber !== null && <p>Результат броска кубика: {rolledNumber}</p>}
 				{result && <p>{result === ResultOptions.WIN ? `Вы выиграли ${winningAmount} TND!` : 'Повезет в следующий раз!'}</p>}
 			</div>

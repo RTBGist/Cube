@@ -1,61 +1,24 @@
-import {useEffect} from "react";
 import {useShallow} from "zustand/react/shallow";
 import {BetOptionsPanel, BetSizePanel, GameResult, useCubeStore} from "src/features/CubeGame";
 import {BetOptions, DiceNumberType, ResultOptions} from "src/features/CubeGame/model/types/types";
-import {LoginForm, useAuthStore} from "src/features/Auth";
-import {fetchAPI} from "src/shared/lib/fetchAPI";
+import {useAuthStore} from "src/features/Auth";
+import {Header} from "src/widgets/Header";
 
 
 function App() {
   const { betSize, balance, setBalance, betOption, currentBetNumber, setRolledNumber, setResult, setWinningAmount } = useCubeStore(
-      useShallow((state) => ({
-        betSize: state.betSize,
-        balance: state.balance,
-        setBalance: state.setBalance,
-        betOption: state.betOption,
-        currentBetNumber: state.currentBetNumber,
-        setRolledNumber: state.setRolledNumber,
-        setResult: state.setResult,
-        setWinningAmount: state.setWinningAmount,
+      useShallow(({betSize, balance, setBalance, betOption, currentBetNumber, setRolledNumber, setResult, setWinningAmount}) => ({
+        betSize,
+        balance,
+        setBalance,
+        betOption,
+        currentBetNumber,
+        setRolledNumber,
+        setResult,
+        setWinningAmount
       }))
   )
-
-  const { isAuth, setIsAuth } = useAuthStore(
-      useShallow((state) => ({
-        isAuth: state.isAuth,
-        setIsAuth: state.setIsAuth
-      }))
-  )
-
-  const isButtonDisabled = !betOption || !isAuth;
-
-  useEffect(() => {
-    if(localStorage.getItem('userAuth') === 'true') {
-      setIsAuth(true);
-
-      (async () => {
-        try {
-          const response = await fetchAPI('https://api.lettobet.dev.bet4skill.com/api/auth/me', null, 'GET');
-          console.log(response);
-          if(response?.status === 401) {
-            throw new Error()
-          }
-          setIsAuth(true);
-          localStorage.setItem('userAuth', 'true');
-        } catch (e) {
-          console.log('error /me', e)
-
-          localStorage.setItem('userAuth', 'false');
-          setIsAuth(false);
-        }
-      })()
-    }
-  }, []);
-
-  const onQuit = () => {
-    setIsAuth(false);
-    localStorage.setItem('userAuth', 'false');
-  }
+  const isAuth = useAuthStore((state) => state.isAuth);
 
   const onPlayGame = () => {
     const randomNumber = Math.floor(Math.random() * 6) + 1 as DiceNumberType;
@@ -97,23 +60,14 @@ function App() {
 
   return (
       <>
-        {isAuth ?
-            <>
-              Вы уже авторизированы
-              <button onClick={onQuit}>Выйти</button>
-            </>
-            :
-            <LoginForm />
-        }
-
-
+        <Header />
 
         Баланс {balance} <br/>
 
         <GameResult />
         <BetSizePanel />
         <BetOptionsPanel />
-        <button onClick={onPlayGame} disabled={isButtonDisabled}>Сделать ставку</button>
+        <button onClick={onPlayGame} disabled={!betOption || !isAuth}>Сделать ставку</button>
       </>
   )
 }

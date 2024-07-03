@@ -12,6 +12,7 @@ interface AuthState {
 	setPassword: (password: string) => void,
 	setIsAuth: (isAuth: boolean) => void,
 	loginByUsername: (data) => void,
+	checkAuth: () => void
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -34,11 +35,33 @@ export const useAuthStore = create<AuthState>()((set) => ({
 			}
 
 			localStorage.setItem('userAuth', 'true');
-			set(() => ({isLoading: false, isAuth: true}))
+			set(() => ({isAuth: true}))
+
+			return response;
 		} catch (e) {
-			set(() => ({isLoading: false, isAuth: false}))
-			localStorage.setItem('userAuth', 'false');
 			console.error('loginByUsername error:', e);
+		} finally {
+			set(() => ({isLoading: false}))
+		}
+	},
+	checkAuth: async () => {
+		try {
+			set(() => ({isLoading: true}))
+			const response = await fetchAPI('https://api.lettobet.dev.bet4skill.com/api/auth/me', null, 'GET');
+
+			if(response?.status === 401) {
+				throw new Error()
+			}
+
+			set(() => ({isAuth: true}))
+			localStorage.setItem('userAuth', 'true');
+		} catch (e) {
+			console.log('error /me', e)
+
+			localStorage.setItem('userAuth', 'false');
+			set(() => ({isAuth: false}))
+		} finally {
+			set(() => ({isLoading: false}))
 		}
 	}
 }))
