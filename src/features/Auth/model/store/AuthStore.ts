@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { fetchAPI } from "src/shared/lib/fetchAPI";
+import {fetchAPI, IData} from "src/shared/lib/fetchAPI";
 
 
 interface AuthState {
@@ -11,7 +11,7 @@ interface AuthState {
 	setLogin: (login: string) => void,
 	setPassword: (password: string) => void,
 	setIsAuth: (isAuth: boolean) => void,
-	loginByUsername: (data) => void,
+	loginByUsername: (data: IData) => void,
 	checkAuth: () => void
 }
 

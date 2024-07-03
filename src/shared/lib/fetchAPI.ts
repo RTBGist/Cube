@@ -1,5 +1,10 @@
-	export async function fetchAPI(url = '', data, method = 'POST') {
-		const options = {
+export interface IData {
+	login: string,
+	password: string
+}
+
+export async function fetchAPI(url = '', data: IData | null, method = 'POST') {
+		const options: RequestInit  = {
 			method: method,
 			headers: {
 				'Content-Type': 'application/json',
@@ -8,7 +13,7 @@
 		}
 
 		if(data) {
-			options['body'] = JSON.stringify(data)
+			options.body = JSON.stringify(data)
 		}
 
 		const response = await fetch(url, options);

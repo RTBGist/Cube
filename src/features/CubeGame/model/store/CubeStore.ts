@@ -4,16 +4,16 @@ import {BetOptions, DiceNumberType, ResultType} from "../types/types";
 interface CubeState {
 	balance: number,
 	betSize: number,
-	betOption: BetOptions,
-	currentBetNumber: DiceNumberType,
-	rolledNumber: DiceNumberType,
-	result: ResultType,
+	betOption: BetOptions | null,
+	currentBetNumber: DiceNumberType | null,
+	rolledNumber: DiceNumberType | null,
+	result: ResultType | null,
 	winningAmount: number,
 
 	setBetSize: (betSize: number) => void,
 	setBalance: (balance: number) => void,
-	setBetOption: (betOption: BetOptions) => void,
-	setCurrentBetNumber: (currentBetNumber: DiceNumberType) => void,
+	setBetOption: (betOption: BetOptions | null) => void,
+	setCurrentBetNumber: (currentBetNumber: DiceNumberType | null) => void,
 	setRolledNumber: (rolledNumber: DiceNumberType) => void,
 	setResult: (result: ResultType) => void,
 	setWinningAmount: (winningAmount: number) => void

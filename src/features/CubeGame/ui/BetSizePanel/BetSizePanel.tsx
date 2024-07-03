@@ -12,7 +12,7 @@ export const BetSizePanel = () => {
 	return (
 			<div>
 				Размер ставки {betSize} <br/>
-				<select value={betSize} onChange={(e) => setBetSize(e.target?.value)}>
+				<select value={betSize} onChange={(e) => setBetSize(+e.target?.value)}>
 					<option value="1">1.00</option>
 					<option value="5">5.00</option>
 					<option value="10">10.00</option>

@@ -24,7 +24,7 @@ export const LoginForm = (props: LoginFormProps) => {
 			setValueError(true)
 		} else {
 			setValueError(false);
-			const response = await loginByUsername({
+			const response: any = await loginByUsername({
 				login,
 				password
 			})

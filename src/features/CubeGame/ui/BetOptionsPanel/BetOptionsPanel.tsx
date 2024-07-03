@@ -1,28 +1,32 @@
 import {useShallow} from "zustand/react/shallow";
 import {useCubeStore} from "src/features/CubeGame";
-import {BetOptions} from "../../model/types/types";
+import {BetOptions, DiceNumberType} from "../../model/types/types";
 import clsx from "clsx";
 import * as cls from './BetOptionsPanel.module.scss';
+import {ChangeEvent, useState} from "react";
 
 export const BetOptionsPanel = () => {
-	const { betOption, setBetOption, currentBetNumber, setCurrentBetNumber } = useCubeStore(
-			useShallow(({betOption, setBetOption, currentBetNumber, setCurrentBetNumber}) => ({
+	const [currentNumber, setCurrentNumber] = useState<string>('1');
+	const { betOption, setBetOption, setCurrentBetNumber } = useCubeStore(
+			useShallow(({betOption, setBetOption, setCurrentBetNumber}) => ({
 				betOption,
 				setBetOption,
-				currentBetNumber,
 				setCurrentBetNumber
 			}))
 	)
 
-	const onChangeCurrentBetNumber = (event) => {
-		let resultNumber = event.target?.value;
+	const onChangeCurrentBetNumber = (event: ChangeEvent<HTMLInputElement>) => {
+		const resultNumber = event.target?.value;
+		const regex = /^[1-6]$/;
 
-		if (/^\d*$/.test(resultNumber)) {
-			const numValue = parseInt(resultNumber, 10);
-			if (numValue >= 1 && numValue <= 6) {
-				setCurrentBetNumber(resultNumber)
-			}
+		setCurrentNumber(resultNumber);
+		if(regex.test(resultNumber)) {
+			setCurrentBetNumber(+resultNumber as DiceNumberType);
+			setBetOption(BetOptions.NUMBER);
+		} else {
+			setBetOption(null);
 		}
+
 	}
 
 	const isOptionActive = (option: BetOptions) => {
@@ -39,8 +43,10 @@ export const BetOptionsPanel = () => {
 				<div className={clsx(cls.option, isOptionActive(BetOptions.FROM_FOUR_TO_SIX) && cls.active)} onClick={() => setBetOption(BetOptions.FROM_FOUR_TO_SIX)}>От 4 до 6</div>
 				<div className={clsx(cls.option, isOptionActive(BetOptions.NUMBER) && cls.active)} onClick={() => setBetOption(BetOptions.NUMBER)}>
 					Конкретное число
-					<input type="number" value={currentBetNumber} onChange={onChangeCurrentBetNumber} placeholder="1" />
+					<input type="text" value={currentNumber} onChange={onChangeCurrentBetNumber} placeholder="Введите число от 1 до 6" />
+					{!betOption && 'Введите значение от 1 до 6'}
 				</div>
+
 			</div>
 	);
 };
